@@ -18,7 +18,10 @@ From source repository:
 ```bash
 > git clone https://github.com/stac-utils/stactools.git
 > cd stactools
-> pip install .
+> pip install .  
+or for development  
+> pip install --editable .  
+
 ```
 
 ## Running
