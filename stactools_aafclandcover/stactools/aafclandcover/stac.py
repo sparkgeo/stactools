@@ -4,27 +4,22 @@ import logging
 import requests
 
 import pystac
-from etlcommon.storage import Storage
 from shapely.geometry import Polygon
 
 logger = logging.getLogger(__name__)
 
 
-def create_item(json_href: str, cog_href: str, asset_storage: Storage) -> pystac.Item:
+def create_item(json_href: str, cog_href: str) -> pystac.Item:
     """Creates a STAC item for an AAFC Land Cover dataset.
 
     Args:
         json_href (str): Path to provider json metadata.
         cog_href (str): Path to COG asset.
-        asset_storage (Storage): The storage object containing
-            the input tif and output COG.
 
     Returns:
         pystac.Item: STAC Item object.
     """
-    json_authed_url = asset_storage.get_authenticated_url(json_href)
-
-    json_response = requests.get(json_authed_url)
+    json_response = requests.get(json_href)
     json_metadata = json_response.json()
 
     tiff_metadata = [
@@ -72,7 +67,7 @@ def create_item(json_href: str, cog_href: str, asset_storage: Storage) -> pystac
     item.add_asset(
         "json",
         pystac.Asset(
-            href=asset_storage.get_url(json_href),
+            href=json_href,
             media_type=pystac.MediaType.JSON,
             roles=["metadata"],
             title="JSON metadata",
@@ -83,7 +78,7 @@ def create_item(json_href: str, cog_href: str, asset_storage: Storage) -> pystac
     item.add_asset(
         "cog",
         pystac.Asset(
-            href=asset_storage.get_url(cog_href),
+            href=cog_href,
             media_type=pystac.MediaType.COG,
             roles=["data"],
             title=title,
