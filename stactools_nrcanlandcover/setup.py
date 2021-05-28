@@ -4,15 +4,14 @@ from setuptools import setup, find_namespace_packages
 from glob import glob
 import io
 
-DATASET_NAME = "AAFC Landcover"
-DATASET_ID = "aafclandcover"
-
-name = f"etltask_{DATASET_ID}"
-description = f"Process {DATASET_NAME} as ETL tasks."
+name = f"stactools_nrcanlandcover"
+description = ("Subpackage for working with Natural Resources Canada Land Cover data in stactools, "
+               "a command line tool and Python library for working with STAC.")
 
 __version__ = load_source(
-    f"stactools.aafclandcover.version",
-    os.path.join(os.path.dirname(__file__), f"stactools/aafclandcover/version.py"),
+    f"stactools.nrcanlandcover.version",
+    os.path.join(os.path.dirname(__file__),
+                 f"stactools/nrcanlandcover/version.py"),
 ).__version__
 
 here = os.path.abspath(os.path.dirname(__file__))
@@ -36,10 +35,17 @@ setup(
     version=__version__,
     long_description=readme,
     long_description_content_type="text/markdown",
-    author="microsoft",
-    author_email="ai4earth@microsoft.com",
+    author="James Banting",
+    author_email="james@sparkgeo.com",
     packages=find_namespace_packages(),
-    py_modules=[os.splitext(os.basename(path))[0] for path in glob("stactools/*.py")],
+    py_modules=[
+        os.splitext(os.basename(path))[0] for path in glob("stactools/*.py")
+    ],
     include_package_data=False,
     install_requires=install_requires,
-)
+    license="Apache Software License 2.0",
+    keywords=[
+        'stactools', 'psytac', 'nrcan', 'landcover', 'raster',
+        'catalog', 'STAC'
+    ])
+

@@ -15,7 +15,7 @@ def create_cog(
     """Create COG from a tif
 
     Args:
-        input_path (str): Path to the AAFC Land cover data.
+        input_path (str): Path to the Natural Resources Canada Land Cover data.
         output_path (str): The path to which the COG will be written.
         raise_on_fail (bool, optional): Whether to raise error on failure.
             Defaults to True.
@@ -29,7 +29,8 @@ def create_cog(
     output = None
     try:
         if dry_run:
-            logger.info("Would have downloaded TIF, created COG, and written COG")
+            logger.info(
+                "Would have downloaded TIF, created COG, and written COG")
         else:
             cmd = [
                 "gdal_translate",
@@ -57,8 +58,6 @@ def create_cog(
 
     except Exception:
         logger.error("Failed to process {}".format(output_path))
-        failed_blob = os.path.join("etl/fix-cog/failed/", output_path)
-        logger.error("Writing {}...".format(failed_blob))
 
         if raise_on_fail:
             raise

@@ -86,6 +86,11 @@ RUN pip install -r /tmp/sentinel2/requirements.txt
 COPY stactools_threedep/requirements.txt /tmp/threedep/requirements.txt
 RUN pip install -r /tmp/threedep/requirements.txt
 
+# Natural Resources Canada Land Cover
+COPY stactools_nrcanlandcover/requirements.txt /tmp/nrcanlandcover/requirements.txt
+RUN pip install -r /tmp/nrcanlandcover/requirements.txt
+
+
 # Jupyter
 RUN pip install jupyter==1.0.0
 
