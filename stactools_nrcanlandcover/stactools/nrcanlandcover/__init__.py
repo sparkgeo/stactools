@@ -1,4 +1,8 @@
 import stactools.core
+
+from stactools.nrcanlandcover.stac import create_item
+from stactools.nrcanlandcover.cog import create_cog
+
 stactools.core.use_fsspec()
 
 
