@@ -18,8 +18,6 @@ def create_nrcanlandcover_command(cli):
     def nrcanlandcover():
         pass
 
-
-
     @nrcanlandcover.command(
         "create-catalog",
         short_help="Create a STAC catalog for NRCan 2015 Land Cover of Canada.",
@@ -29,8 +27,9 @@ def create_nrcanlandcover_command(cli):
         "-s",
         "--source",
         help="The url to the metadata description.",
-        default="https://open.canada.ca/data/en/dataset/4e615eae-b90c-420b-adee-2ca35896caf6.jsonld"
-    )    
+        default=
+        "https://open.canada.ca/data/en/dataset/4e615eae-b90c-420b-adee-2ca35896caf6.jsonld"
+    )
     def create_catalog_command(destination: str, source: str):
         """Creates a STAC Catalog from Natural Resources Canada
         Land Cover metadata files.
@@ -56,8 +55,6 @@ def create_nrcanlandcover_command(cli):
         # Create stac item
         # item = stac.create_item(json_path, cog_path, output)
         # item.collection_id = "nrcan-landcover"
-
-
 
     @nrcanlandcover.command(
         "create-cog",
