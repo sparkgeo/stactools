@@ -4,9 +4,9 @@ import pytz
 import json
 import logging
 from stactools.nrcanlandcover.constants import (LANDCOVER_ID, LANDCOVER_EPSG,
-                                                LANDCOVER_CRS, LANDCOVER_TITLE,
-                                                DESCRIPTION, NRCAN_PROVIDER,
-                                                LICENSE, LICENSE_LINK)
+                                                LANDCOVER_TITLE, DESCRIPTION,
+                                                NRCAN_PROVIDER, LICENSE,
+                                                LICENSE_LINK)
 import requests
 
 import pystac
@@ -90,8 +90,6 @@ def create_item(metadata_url: str, cog_href: str = None) -> pystac.Item:
     properties = {
         "title": title,
         "description": description,
-        "start_datetime": start_datetime,
-        "end_datetime": end_datetime,
     }
 
     # Create item
@@ -103,6 +101,13 @@ def create_item(metadata_url: str, cog_href: str = None) -> pystac.Item:
         properties=properties,
         stac_extensions=[],
     )
+
+    if start_datetime and end_datetime:
+        item.common_metadata.start_datetime = start_datetime
+        item.common_metadata.end_datetime = end_datetime
+
+    item.ext.enable("projection")
+    item.ext.projection.epsg = LANDCOVER_EPSG
 
     # Create metadata asset
     item.add_asset(
@@ -131,12 +136,11 @@ def create_item(metadata_url: str, cog_href: str = None) -> pystac.Item:
 
 
 def create_collection(metadata_url: str):
-    #Creates a STAC collection for a Natural Resources Canada Land Cover dataset
+    # Creates a STAC collection for a Natural Resources Canada Land Cover dataset
 
     metadata = _get_metadata(metadata_url)
 
     title = metadata.get("tiff_metadata").get("dct:title")
-    description = metadata.get("description_metadata").get("dct:description")
 
     utc = pytz.utc
     year = title.split(" ")[0]
@@ -147,7 +151,6 @@ def create_collection(metadata_url: str):
     start_datetime = dataset_datetime
     end_datetime = end_datetime
 
-    id = title.replace(" ", "-")
     geometry = json.loads(metadata.get("geojson_geom").get("@value"))
     bbox = Polygon(geometry.get("coordinates")[0]).bounds
 
