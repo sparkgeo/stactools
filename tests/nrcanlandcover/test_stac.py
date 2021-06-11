@@ -2,13 +2,16 @@ import datetime
 import unittest
 
 from stactools.nrcanlandcover import stac
+from stactools.nrcanlandcover import utils
 
 
 class CreateItemTest(unittest.TestCase):
     def test_create_item(self):
-        item = stac.create_item(
-            "https://open.canada.ca/data/en/dataset/4e615eae-b90c-420b-adee-2ca35896caf6.jsonld"
-        )
+        metadata_url = "https://open.canada.ca/data/en/dataset/4e615eae-b90c-420b-adee-2ca35896caf6.jsonld"
+
+        metadata = utils.get_metadata(metadata_url)
+
+        item = stac.create_item(metadata, metadata_url)
 
         self.assertEqual(item.id, "2015-Land-Cover-of-Canada")
         self.assertTrue(item.geometry is not None)

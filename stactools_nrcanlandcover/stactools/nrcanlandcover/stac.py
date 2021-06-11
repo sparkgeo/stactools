@@ -7,7 +7,6 @@ from stactools.nrcanlandcover.constants import (LANDCOVER_ID, LANDCOVER_EPSG,
                                                 LANDCOVER_TITLE, DESCRIPTION,
                                                 NRCAN_PROVIDER, LICENSE,
                                                 LICENSE_LINK)
-import requests
 
 import pystac
 from shapely.geometry import Polygon
@@ -15,50 +14,9 @@ from shapely.geometry import Polygon
 logger = logging.getLogger(__name__)
 
 
-def _get_metadata(metadata_url: str) -> dict:
-    """Gets metadata from the various formats published by NRCan.
-
-    Args:
-        metadata_url (str): url to get metadata from.
-
-    Returns:
-        dict: Land Cover Metadata.
-    """
-    if metadata_url.endswith(".jsonld"):
-        metadata_response = requests.get(metadata_url)
-        jsonld_response = metadata_response.json()
-
-        tiff_metadata = [
-            i for i in jsonld_response.get("@graph")
-            if i.get("dct:format") == "TIFF"
-        ][0]
-        geom_metadata = [
-            i for i in jsonld_response.get("@graph")
-            if "locn:geometry" in i.keys()
-        ][0]
-        geojson_geom = [
-            i for i in geom_metadata.get("locn:geometry")
-            if "geo+json" in i.get("@type")
-        ][0]
-        description_metadata = [
-            i for i in jsonld_response.get("@graph")
-            if "dct:description" in i.keys()
-        ][0]
-
-        metadata = {
-            "tiff_metadata": tiff_metadata,
-            "geom_metadata": geom_metadata,
-            "geojson_geom": geojson_geom,
-            "description_metadata": description_metadata
-        }
-
-        return metadata
-    else:
-        # only jsonld support.
-        raise NotImplementedError()
-
-
-def create_item(metadata_url: str, cog_href: str = None) -> pystac.Item:
+def create_item(metadata: dict,
+                metadata_url: str,
+                cog_href: str = None) -> pystac.Item:
     """Creates a STAC item for a Natural Resources Canada Land Cover dataset.
 
     Args:
@@ -68,8 +26,6 @@ def create_item(metadata_url: str, cog_href: str = None) -> pystac.Item:
     Returns:
         pystac.Item: STAC Item object.
     """
-
-    metadata = _get_metadata(metadata_url)
 
     title = metadata.get("tiff_metadata").get("dct:title")
     description = metadata.get("description_metadata").get("dct:description")
@@ -135,10 +91,8 @@ def create_item(metadata_url: str, cog_href: str = None) -> pystac.Item:
     return item
 
 
-def create_collection(metadata_url: str):
+def create_collection(metadata: dict):
     # Creates a STAC collection for a Natural Resources Canada Land Cover dataset
-
-    metadata = _get_metadata(metadata_url)
 
     title = metadata.get("tiff_metadata").get("dct:title")
 
