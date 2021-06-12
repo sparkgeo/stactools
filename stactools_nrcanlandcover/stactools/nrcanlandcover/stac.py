@@ -117,6 +117,7 @@ def create_collection(metadata: dict):
         extent=pystac.Extent(
             pystac.SpatialExtent(bbox),
             pystac.TemporalExtent([start_datetime, end_datetime])),
+        catalog_type=pystac.CatalogType.RELATIVE_PUBLISHED,
     )
     collection.add_link(LICENSE_LINK)
 

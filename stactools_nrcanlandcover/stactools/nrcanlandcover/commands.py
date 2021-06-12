@@ -1,10 +1,11 @@
 import click
 import logging
-from os import listdir
+import os
 
 from stactools.nrcanlandcover import stac
 from stactools.nrcanlandcover import cog
 from stactools.nrcanlandcover import utils
+from stactools.nrcanlandcover.constants import LANDCOVER_ID
 
 logger = logging.getLogger(__name__)
 
@@ -50,9 +51,9 @@ def create_nrcanlandcover_command(cli):
 
         asset_package_path = utils.download_asset_package(metadata)
 
-        tif_path = [
-            i for i in listdir(asset_package_path) if i.endswith(".tif")
-        ]
+        tif_path = os.path.join(asset_package_path, [
+            i for i in os.listdir(asset_package_path) if i.endswith(".tif")
+        ][0])
 
         output_path = destination.replace(".json", "_cog.tif")
 
@@ -61,7 +62,15 @@ def create_nrcanlandcover_command(cli):
 
         # Create stac item
         item = stac.create_item(metadata, json_path, cog_path, destination)
-        item.collection_id = "nrcan-landcover"
+        item.collection_id = LANDCOVER_ID
+
+        collection = stac.create_collection(metadata)
+        collection.add_item(item)
+        collection_dir = os.path.dirname(os.path.dirname(destination))
+
+        collection.normalize_hrefs(collection_dir)
+        collection.save()
+        collection.validate()
 
     @nrcanlandcover.command(
         "create-cog",

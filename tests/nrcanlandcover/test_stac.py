@@ -7,7 +7,7 @@ from stactools.nrcanlandcover import utils
 
 class CreateItemTest(unittest.TestCase):
     def test_create_item(self):
-        metadata_url = "https://open.canada.ca/data/en/dataset/4e615eae-b90c-420b-adee-2ca35896caf6.jsonld"
+        metadata_url = "https://open.canada.ca/data/en/dataset/4e615eae-b90c-420b-adee-2ca35896caf6.jsonld"  # noqa
 
         metadata = utils.get_metadata(metadata_url)
 
@@ -50,10 +50,26 @@ class CreateItemTest(unittest.TestCase):
         ))
         self.assertEqual(data.title, "JSON metadata")
         self.assertTrue(data.description is None)
-        self.assertTrue(data.media_type, "application/json")
-        self.assertTrue(data.roles, ["metadata"])
+        self.assertEqual(data.media_type, "application/json")
+        self.assertEqual(data.roles, ["metadata"])
 
         item.ext.enable("projection")
         self.assertEqual(item.ext.projection.epsg, 3978)
 
         item.validate()
+
+
+class CreateCollectionTest(unittest.TestCase):
+    def test_create_collection(self):
+        metadata_url = "https://open.canada.ca/data/en/dataset/4e615eae-b90c-420b-adee-2ca35896caf6.jsonld"  # noqa
+
+        metadata = utils.get_metadata(metadata_url)
+
+        collection = stac.create_collection(metadata)
+
+        self.assertEqual(collection.id, "nrcan-landcover")
+        self.assertTrue(collection.description is not None)
+        self.assertTrue(collection.title is not None)
+        self.assertEqual(len(collection.extent.spatial.bboxes[0]), 4)
+        self.assertEqual(len(collection.extent.temporal.intervals[0]), 2)
+        self.assertEqual(collection.license, "proprietary")
