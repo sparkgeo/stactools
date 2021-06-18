@@ -90,6 +90,10 @@ RUN pip install -r /tmp/threedep/requirements.txt
 COPY stactools_nrcanlandcover/requirements.txt /tmp/nrcanlandcover/requirements.txt
 RUN pip install -r /tmp/nrcanlandcover/requirements.txt
 
+# NALCMS
+COPY stactools_nalcms/requirements.txt /tmp/nalcms/requirements.txt
+RUN pip install -r /tmp/nalcms/requirements.txt
+
 
 # Jupyter
 RUN pip install jupyter==1.0.0

@@ -1,0 +1,5 @@
+# stactools.nalcms
+
+This data set shows areas where the land cover classification changed between 2010 and 2015. The 2010-2015 Land Cover Change of North America at 30 meters was produced as part of the North American Land Change Monitoring System NALCMS), a trilateral effort between the Canada Centre for Remote Sensing, the United States Geological Survey, and three Mexican organizations including the National Institute of Statistics and Geography (Instituto Nacional de Estadística y Geografia), National Commission for the Knowledge and Use of the Biodiversity (Comisión Nacional Para el Conocimiento y Uso de la Biodiversidad), and the National Forestry Commission of Mexico (Comisión Nacional Forestal). 
+
+This Land Cover change map shows class transitions from 2010 to 2015 over Canada, Alaska, the conterminous United States and Mexico. Changes  have been assessed from Land Cover maps at 30 meters resolution derived  from Landsat Imagery over Canada and United States in 2010 and 2015, and Landsat and RapidEye Imagery over Mexico in 2010 and 2015 respectively.
