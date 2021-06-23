@@ -8,9 +8,10 @@ from zipfile import ZipFile
 
 
 def _unzip_dir(zip_path: str, unzip_dir: str) -> str:
-    with ZipFile(zip_path, 'r') as zip_ref:
+    with ZipFile(zip_path, "r") as zip_ref:
         zip_ref.extractall(unzip_dir)
-        return unzip_dir
+
+    return unzip_dir
 
 
 def download_asset_package(metadata: dict) -> str:
@@ -20,10 +21,10 @@ def download_asset_package(metadata: dict) -> str:
     tmp_dir = mkdtemp()
 
     if access_url.startswith("http"):
-        tmp_path = os.path.join(tmp_dir, 'file.zip')
+        tmp_path = os.path.join(tmp_dir, "file.zip")
         resp = requests.get(access_url)
 
-        with open(tmp_path, 'wb') as f:
+        with open(tmp_path, "wb") as f:
             f.write(resp.content)
 
         asset_package_path = _unzip_dir(tmp_path, tmp_dir)
@@ -54,17 +55,15 @@ def get_metadata(metadata_url: str) -> dict:
             with open(metadata_url) as f:
                 jsonld_response = json.load(f)
         geom_metadata = [
-            i for i in jsonld_response.get("@graph")
-            if "locn:geometry" in i.keys()
+            i for i in jsonld_response.get("@graph") if "locn:geometry" in i.keys()
         ][0]
         description_metadata = [
-            i for i in jsonld_response.get("@graph")
-            if "dct:description" in i.keys()
+            i for i in jsonld_response.get("@graph") if "dct:description" in i.keys()
         ][0]
 
         metadata = {
             "geom_metadata": geom_metadata,
-            "description_metadata": description_metadata
+            "description_metadata": description_metadata,
         }
 
         return metadata

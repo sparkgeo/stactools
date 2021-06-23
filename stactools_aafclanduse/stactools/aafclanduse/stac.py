@@ -1,24 +1,28 @@
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
+import re
 import pytz
 import json
 import logging
-from stactools.aafclanduse.constants import (LANDUSE_ID, LANDUSE_EPSG,
-                                                LANDUSE_TITLE, DESCRIPTION,
-                                                LANDUSE_PROVIDER, LICENSE,
-                                                LICENSE_LINK)
+from stactools.aafclanduse.constants import (
+    LANDUSE_ID,
+    LANDUSE_EPSG,
+    LANDUSE_TITLE,
+    DESCRIPTION,
+    LANDUSE_PROVIDER,
+    LICENSE,
+    LICENSE_LINK,
+)
 
 import pystac
 import rasterio
 from rasterio.warp import transform_bounds
-import shapely.geometry
+from shapely import geometry
 
 logger = logging.getLogger(__name__)
 
 
-def create_item(metadata: dict,
-                metadata_url: str,
-                cog_href: stR) -> pystac.Item:
+def create_item(metadata: dict, metadata_url: str, cog_href: str) -> pystac.Item:
     """Creates a STAC item for a 1990, 2000 and 2010 Canada Land Use dataset.
 
     Args:
@@ -29,8 +33,7 @@ def create_item(metadata: dict,
         pystac.Item: STAC Item object.
     """
 
-
-    item_id = cog_href.split(".")[0].split("/")[-1]
+    item_id = '.'.join(cog_href.split(".")[:-1]).split("/")[-1]
 
     title = item_id
     description = metadata.get("description_metadata").get("dct:description")
@@ -49,15 +52,11 @@ def create_item(metadata: dict,
 
     bounds = src.bounds
     bbox = list(transform_bounds(src.crs, "EPSG:4326", *bounds))
-    
-    polygon = shapely.geometry.box(*bbox, ccw=True)
+
+    polygon = geometry.box(*bbox, ccw=True)
     coordinates = [list(i) for i in list(polygon.exterior.coords)]
 
-    geometry = {
-                "type":"Polygon",
-                "coordinates": [coordinates]
-                }
-
+    extent_geometry = {"type": "Polygon", "coordinates": [coordinates]}
 
     properties = {
         "title": title,
@@ -66,11 +65,10 @@ def create_item(metadata: dict,
         "end_datetime": end_datetime,
     }
 
-
     # Create item
     item = pystac.Item(
         id=item_id,
-        geometry=geometry,
+        geometry=extent_geometry,
         bbox=bbox,
         datetime=dataset_datetime,
         properties=properties,
@@ -95,7 +93,6 @@ def create_item(metadata: dict,
         ),
     )
 
-
     item.add_asset(
         "cog",
         pystac.Asset(
@@ -112,15 +109,17 @@ def create_item(metadata: dict,
 def create_collection(metadata: dict):
     # Creates a STAC collection for a 1990, 2000 and 2010 Canada Land Use data dataset
 
-    dataset_datetime = utc.localize(datetime.strptime(1990, "%Y"))
+    dataset_datetime = pytz.utc.localize(datetime.strptime(1990, "%Y"))
 
     end_datetime = dataset_datetime + relativedelta(years=10)
 
     start_datetime = dataset_datetime
     end_datetime = end_datetime
 
-    geometry = json.loads(metadata.get("geom_metadata").get("locn:geometry")[0].get('@value'))
-    bbox = Polygon(geometry.get("coordinates")[0]).bounds
+    extent_geometry = json.loads(
+        metadata.get("geom_metadata").get("locn:geometry")[0].get("@value")
+    )
+    bbox = geometry.Polygon(extent_geometry.get("coordinates")[0]).bounds
 
     collection = pystac.Collection(
         id=LANDUSE_ID,
@@ -130,7 +129,8 @@ def create_collection(metadata: dict):
         license=LICENSE,
         extent=pystac.Extent(
             pystac.SpatialExtent(bbox),
-            pystac.TemporalExtent([start_datetime, end_datetime])),
+            pystac.TemporalExtent([start_datetime, end_datetime]),
+        ),
         catalog_type=pystac.CatalogType.RELATIVE_PUBLISHED,
     )
     collection.add_link(LICENSE_LINK)
