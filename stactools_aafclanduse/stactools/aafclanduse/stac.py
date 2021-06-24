@@ -84,7 +84,7 @@ def create_item(metadata: dict, metadata_url: str, cog_href: str) -> pystac.Item
 
     # Create metadata asset
     item.add_asset(
-        "json",
+        "metadata",
         pystac.Asset(
             href=metadata_url,
             media_type=pystac.MediaType.JSON,
@@ -94,7 +94,7 @@ def create_item(metadata: dict, metadata_url: str, cog_href: str) -> pystac.Item
     )
 
     item.add_asset(
-        "cog",
+        "landuse",
         pystac.Asset(
             href=cog_href,
             media_type=pystac.MediaType.COG,
