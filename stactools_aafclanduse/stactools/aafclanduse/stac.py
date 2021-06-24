@@ -89,7 +89,7 @@ def create_item(metadata: dict, metadata_url: str, cog_href: str) -> pystac.Item
             href=metadata_url,
             media_type=pystac.MediaType.JSON,
             roles=["metadata"],
-            title="JSON metadata",
+            title="Land Use 1990, 2000 & 2010 metadata",
         ),
     )
 
@@ -99,7 +99,7 @@ def create_item(metadata: dict, metadata_url: str, cog_href: str) -> pystac.Item
             href=cog_href,
             media_type=pystac.MediaType.COG,
             roles=["data"],
-            title=title,
+            title="Land Use 1990, 2000 & 2010 COGs",
         ),
     )
 
