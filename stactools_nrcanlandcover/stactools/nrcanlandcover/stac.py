@@ -72,7 +72,7 @@ def create_item(metadata: dict,
             href=metadata_url,
             media_type=pystac.MediaType.JSON,
             roles=["metadata"],
-            title="JSON metadata",
+            title="Land cover of Canada metadata",
         ),
     )
 
@@ -84,7 +84,7 @@ def create_item(metadata: dict,
                 href=cog_href,
                 media_type=pystac.MediaType.COG,
                 roles=["data"],
-                title=title,
+                title="Land cover of Canada COGs",
             ),
         )
 
